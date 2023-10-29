@@ -13,7 +13,7 @@ class DotFilesCatalogControllerTest extends TestCase
             'default' => [
                 'exceptions' => false
             ],
-            'debug' => true,
+            // 'debug' => true,
         ]);
     }
     public function testRootCall(): void

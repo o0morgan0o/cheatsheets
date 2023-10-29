@@ -22,7 +22,28 @@ class DotFilesCatalogController extends AbstractController
         $repoContentUrl = $environmentService->getRepoContentUrl();
         $branch = $environmentService->getRepoBranch();
 
-        $repositoryFetcher = new RepositoryFetcher($httpClient, $repoUrl, $repoContentUrl, $branch);
+
+        $repositoryFetcher = new RepositoryFetcher($httpClient, $repoUrl, $repoContentUrl, $branch, false);
+
+        $response = $repositoryFetcher->getRepoResponse();
+        return $response;
+    }
+
+    #[Route('/{folder}', name: 'dotfiles_catalog_folder')]
+    public function getFolder(
+        EnvironmentService $environmentService,
+        HttpClientInterface $httpClient,
+        string $folder
+    ): Response {
+
+        $path = $folder;
+
+        $repoUrl = $environmentService->getRepoBaseUrl();
+        $repoContentUrl = $environmentService->getRepoContentUrl();
+        $branch = $environmentService->getRepoBranch();
+
+
+        $repositoryFetcher = new RepositoryFetcher($httpClient, $repoUrl, $repoContentUrl, $branch, true, $path);
 
         $response = $repositoryFetcher->getRepoResponse();
         return $response;

@@ -6,20 +6,32 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class RepositoryFetcher
 {
 
+    /**
+     * @param HTTPClientInterface $httpClient
+     * @param string $repoUrl
+     * @param string $repoContentUrl
+     * @param string $branch
+     * @param bool $showContentFilesOnly - if true, only files will be shown, if false, folders will be shown. It is used to show better content if we are on a leaf folder (the end of the request)
+     * @param string $path
+     */
     public function __construct(
         private HttpClientInterface $httpClient,
         private string $repoUrl,
         private string $repoContentUrl,
         private string $branch,
+        private bool $showContentFilesOnly,
+        private string $path = ""
+
     ) {
     }
 
     private function getHelpFileContent(): array
     {
         // get help.txt from repository
+        $url = $this->repoUrl . '/' . $this->branch . '/' . $this->path . '/help.txt';
         $helpFileResponse = $this->httpClient->request(
             'GET',
-            $this->repoUrl . '/' . $this->branch . '/help.txt'
+            $url
         );
         $helpFileContent = "";
 
@@ -43,20 +55,40 @@ class RepositoryFetcher
      */
     private function getFileListing(): array
     {
-        $folderConstantResponse = $this->httpClient->request(
+        $url = $this->repoContentUrl . '/' . $this->path . '?ref=' . $this->branch;
+        $folderContentResponse = $this->httpClient->request(
             'GET',
-            $this->repoContentUrl
+            $url
         );
-        $statusCode = $folderConstantResponse->getStatusCode();
-        $responseList = $folderConstantResponse->toArray();
+        $statusCode = $folderContentResponse->getStatusCode();
+        $responseList = $folderContentResponse->toArray();
         $fileListing = array();
         if ($statusCode == 200) {
-            foreach ($responseList as $fileOrFolder) {
-                if ($fileOrFolder['type'] == 'dir') {
-                    $fileListing[] = $fileOrFolder['name'];
+            /* here we want to separate the different cases
+            - if we are not on a leaf, we want to show only the directories
+            - if we are on a leaf, we want to show the files, but we filter the help.txt and all the documentations
+              the documentations must be shown as text for each suggestion, so a special format is needed
+            */
+            if ($this->showContentFilesOnly) {
+                // we are on a leaf, we want to show the files
+                $leafFileFormatter = new LeafFilesFormatter($this->httpClient, $this->repoUrl, $this->branch, $this->path, $responseList);
+                $leafFileFormatter->getFilteredArray();
+                $fileListing = $leafFileFormatter->getFilteredArray();
+
+
+            } else {
+                // we are not on a leaf, we want to show the directories
+                foreach ($responseList as $fileOrFolder) {
+                    if ($fileOrFolder['type'] == 'dir') {
+                        $fileListing[] = array(
+                            "name" => $fileOrFolder['name'],
+                            "hint" => "This is a directory"
+                        );
+                    }
                 }
             }
         } else {
+            // nothing to do
         }
         return array(
             'error' => $statusCode != 200,
@@ -67,7 +99,6 @@ class RepositoryFetcher
 
     public function getRepoResponse(): Response
     {
-        $content = "";
         $formatter = new ResponseFormatter();
         $formatter->addContentBlock($this->getHelpFileContent());
         $formatter->addContentBlock($this->getFileListing());

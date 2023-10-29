@@ -26,7 +26,6 @@ class RepositoryFetcher
         $this->urlBuilder = new UrlBuilder($this->apiBaseUrl, $this->rawContentBaseUrl, $this->branch);
     }
 
-
     private function getHelpFileContent($helpFilePath): string
     {
         // get help.txt from repository
@@ -42,55 +41,6 @@ class RepositoryFetcher
         }
 
         return $helpFileContent;
-    }
-
-    /**
-     * 
-     * get a list of files and folders from repository
-     * this list will be filtered to keep only the folders
-     */
-    private function getFileListing(string $path): array
-    {
-        $url = $this->rawContentBaseUrl . '/' . $path . '?ref=' . $this->branch;
-        $folderContentResponse = $this->httpClient->request(
-            'GET',
-            $url
-        );
-        $statusCode = $folderContentResponse->getStatusCode();
-        $responseList = $folderContentResponse->toArray();
-        $fileListing = array();
-        if ($statusCode == 200) {
-            /* here we want to separate the different cases
-            - if we are not on a leaf, we want to show only the directories
-            - if we are on a leaf, we want to show the files, but we filter the help.txt and all the documentations
-              the documentations must be shown as text for each suggestion, so a special format is needed
-            */
-            if ($this->showContentFilesOnly) {
-                // we are on a leaf, we want to show the files
-                $leafFileFormatter = new LeafFilesFormatter($this->httpClient, $this->apiBaseUrl, $this->branch, $this->path, $responseList);
-                $leafFileFormatter->getFilteredArray();
-                $fileListing = $leafFileFormatter->getFilteredArray();
-
-
-            } else {
-                // we are not on a leaf, we want to show the directories
-                foreach ($responseList as $fileOrFolder) {
-                    if ($fileOrFolder['type'] == 'dir') {
-                        $fileListing[] = array(
-                            "name" => $fileOrFolder['name'],
-                            "hint" => "This is a directory"
-                        );
-                    }
-                }
-            }
-        } else {
-            // nothing to do
-        }
-        return array(
-            'error' => $statusCode != 200,
-            'content' => $fileListing,
-        );
-
     }
 
     private function getRootFileListing()
@@ -183,7 +133,6 @@ class RepositoryFetcher
             case DotfileRequestType::FILE:
                 $formatter->addDotfileWithDocumentationContentBlock($this->getTechnologyDotFile($technology, $dotfile));
                 break;
-
         }
 
         $response = new Response($formatter->getFormattedText(), 200);

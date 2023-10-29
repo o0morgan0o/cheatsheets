@@ -18,6 +18,13 @@ framework:
   php_errors:
     log: true
 
+  http_client:
+    scoped_clients:
+      github:
+        base_uri: 'https://api\.github\.com/'
+        headers:
+          Authorization: "Bearer %env(APP_GITHUB_API_TOKEN)%"
+
 when@test:
   framework:
     test: true

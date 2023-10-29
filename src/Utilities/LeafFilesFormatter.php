@@ -1,4 +1,6 @@
 <?php
+namespace App\Utilities;
+
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class LeafFilesFormatter
@@ -24,7 +26,7 @@ class LeafFilesFormatter
                 continue;
             }
             // we want to want to show the documentations
-            if ($this->endsWith($fileOrFolder['name'], '.md')) {
+            if (FilePathUtilities::endsWith($fileOrFolder['name'], '.md')) {
                 continue;
             }
             // all remaining files should be OK
@@ -52,8 +54,4 @@ class LeafFilesFormatter
 
     }
 
-    private function endsWith($haystack, $needle)
-    {
-        return (strpos(strrev($haystack), strrev($needle)) === 0);
-    }
 }

@@ -9,7 +9,6 @@ class ResponseFormatter
     public function __construct()
     {
         $this->responseText = "";
-        $this->addHeader();
     }
 
     private function addHeader()
@@ -30,23 +29,47 @@ class ResponseFormatter
 
     public function addContentBlock($content): void
     {
-        if ($content['error']) {
-            $this->addLine("Error fetching content");
-        } else {
-            if (is_array($content['content'])) {
-                foreach ($content['content'] as $line) {
-                    if (is_array($line)) {
-                        // if we are here, we should have the keys name and hint
-                        $this->addFileWithHint($line['name'], $line['hint']);
-                    } else {
-                        $this->addLine($line);
-                    }
-                }
-            } else {
-                $this->addLine($content['content']);
-            }
+        $counter = 0;
+        foreach ($content as $technology) {
+            $this->addLine(strval($counter) . ' | ' . $technology);
+            $this->addLine("---------");
+            $counter++;
         }
         $this->addLine("");
+    }
+
+    public function addHeaderContentBlock($content): void
+    {
+        $this->addLine("---------");
+        $this->addLine($content);
+        $this->addLine("---------");
+    }
+
+    public function addDotfileListInTechnology(array $dotfileListInTechnology): void
+    {
+        $dotfiles = $dotfileListInTechnology['dotfiles'];
+        $counter = 0;
+        foreach ($dotfiles as $dotfile) {
+            $dotfileTitle = $dotfile["dotfile"];
+            $dotfileHint = $dotfile["hint"];
+            $this->addLine("---------");
+            $this->addLine(strval($counter) . ' | ' . $dotfileTitle);
+            $this->addLine($dotfileHint);
+            $counter++;
+
+        }
+    }
+
+    public function addDotfileWithDocumentationContentBlock(array $dotfileWithDocumentation)
+    {
+        $documentation = $dotfileWithDocumentation['documentation'];
+        $dotfile = $dotfileWithDocumentation['content'];
+
+        $this->addLine("---------");
+        $this->addLine($documentation);
+        $this->addLine($dotfile);
+        $this->addLine("---------");
+
     }
 
 

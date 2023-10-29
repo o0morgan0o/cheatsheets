@@ -2,22 +2,20 @@
 
 namespace App\Services;
 
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
-
 class EnvironmentService
 {
 
     public function __construct(
-        private $repoBaseUrl,
-        private $repoContentUrl,
+        private $rawContentBaseUrl,
+        private $apiBaseUrl,
         private $repoBranch,
     ) {
     }
 
 
-    public function getRepoBaseUrl(): string
+    public function getApiBaseUrl(): string
     {
-        return $this->repoBaseUrl;
+        return $this->apiBaseUrl;
     }
 
     public function getRepoBranch(): string
@@ -25,9 +23,9 @@ class EnvironmentService
         return $this->repoBranch;
     }
 
-    public function getRepoContentUrl(): string
+    public function getRawContentBaseUrl(): string
     {
-        return $this->repoContentUrl;
+        return $this->rawContentBaseUrl;
     }
 
 }

@@ -1,38 +1,37 @@
 <?php
+namespace App\Utilities;
+
 use App\Utilities\ResponseFormatter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use App\Utilities\UrlBuilder;
+
 
 class RepositoryFetcher
 {
+    var $urlBuilder;
 
     /**
      * @param HTTPClientInterface $httpClient
      * @param string $repoUrl
      * @param string $repoContentUrl
      * @param string $branch
-     * @param bool $showContentFilesOnly - if true, only files will be shown, if false, folders will be shown. It is used to show better content if we are on a leaf folder (the end of the request)
-     * @param string $path
      */
     public function __construct(
         private HttpClientInterface $httpClient,
-        private string $repoUrl,
-        private string $repoContentUrl,
+        private string $apiBaseUrl,
+        private string $rawContentBaseUrl,
         private string $branch,
-        private bool $showContentFilesOnly,
-        private string $path = ""
-
     ) {
+        $this->urlBuilder = new UrlBuilder($this->apiBaseUrl, $this->rawContentBaseUrl, $this->branch);
     }
 
-    private function getHelpFileContent(): array
+
+    private function getHelpFileContent($helpFilePath): string
     {
         // get help.txt from repository
-        $url = $this->repoUrl . '/' . $this->branch . '/' . $this->path . '/help.txt';
-        $helpFileResponse = $this->httpClient->request(
-            'GET',
-            $url
-        );
+        $helpFileUrl = $this->urlBuilder->buildUrlForDotfileContent('', 'help.txt');
+        $helpFileResponse = $this->httpClient->request('GET', $helpFileUrl);
         $helpFileContent = "";
 
         $statusCode = $helpFileResponse->getStatusCode();
@@ -42,10 +41,7 @@ class RepositoryFetcher
             $helpFileContent = "No help.txt file found in repository";
         }
 
-        return array(
-            'error' => $statusCode != 200,
-            'content' => $helpFileContent,
-        );
+        return $helpFileContent;
     }
 
     /**
@@ -53,9 +49,9 @@ class RepositoryFetcher
      * get a list of files and folders from repository
      * this list will be filtered to keep only the folders
      */
-    private function getFileListing(): array
+    private function getFileListing(string $path): array
     {
-        $url = $this->repoContentUrl . '/' . $this->path . '?ref=' . $this->branch;
+        $url = $this->rawContentBaseUrl . '/' . $path . '?ref=' . $this->branch;
         $folderContentResponse = $this->httpClient->request(
             'GET',
             $url
@@ -71,7 +67,7 @@ class RepositoryFetcher
             */
             if ($this->showContentFilesOnly) {
                 // we are on a leaf, we want to show the files
-                $leafFileFormatter = new LeafFilesFormatter($this->httpClient, $this->repoUrl, $this->branch, $this->path, $responseList);
+                $leafFileFormatter = new LeafFilesFormatter($this->httpClient, $this->apiBaseUrl, $this->branch, $this->path, $responseList);
                 $leafFileFormatter->getFilteredArray();
                 $fileListing = $leafFileFormatter->getFilteredArray();
 
@@ -97,14 +93,102 @@ class RepositoryFetcher
 
     }
 
-    public function getRepoResponse(): Response
+    private function getRootFileListing()
+    {
+        $url = $this->urlBuilder->buildUrlForRootTechnologyListing();
+        $folderContentResponse = $this->httpClient->request('GET', $url);
+        $statusCode = $folderContentResponse->getStatusCode();
+        $responseList = $folderContentResponse->toArray();
+        $technologyListing = array();
+        foreach ($responseList as $fileOrFolder) {
+            if ($fileOrFolder['type'] == 'dir') {
+                $technologyListing[] = $fileOrFolder['name'];
+            }
+        }
+        return $technologyListing;
+    }
+
+
+    private function getTechnologyFileListing(string $technology)
+    {
+        $url = $this->urlBuilder->buildUrlForTechnologyListing($technology);
+        $folderContentResponse = $this->httpClient->request('GET', $url);
+        $statusCode = $folderContentResponse->getStatusCode();
+        $responseList = $folderContentResponse->toArray();
+        //
+        $fileListing = array();
+        foreach ($responseList as $fileOrFolder) {
+
+            // here we must fetch all the children and their documentantions
+            // but we want to except the help.txt file
+            // we also want to skip the documentation at this step, because the documentation whill be handle after the dotfile
+            if (($fileOrFolder['name'] == 'help.txt') or (FilePathUtilities::endsWith($fileOrFolder['name'], '.md'))) {
+                continue;
+            }
+
+            // we request the name of the dotfile
+            $fileName = $fileOrFolder['name'];
+            // we request the content of the documentation 
+            $documentationUrl = $this->urlBuilder->buildUrlForDotfileDocumentationContent($technology, $fileName);
+            $documentationUrlRequest = $this->httpClient->request('GET', $documentationUrl);
+            $documentationContent = $documentationUrlRequest->getContent();
+
+            $fileListing[] = array(
+                "dotfile" => $fileName,
+                "hint" => $documentationContent
+            );
+        }
+        return array(
+            'error' => $statusCode != 200,
+            'dotfiles' => $fileListing,
+        );
+
+    }
+
+    private function getTechnologyDotFile(string $technology, string $dotfile)
+    {
+        // get dotfile content
+        $url = $this->urlBuilder->buildUrlForDotfileContent($technology, $dotfile);
+        $dotfileRequest = $this->httpClient->request('GET', $url);
+        $dotfileStatusCode = $dotfileRequest->getStatusCode();
+        $dotfileContent = $dotfileRequest->getContent();
+        // get dotfile documentation content
+        $urlDocumentation = $this->urlBuilder->buildUrlForDotfileDocumentationContent($technology, $dotfile);
+        $dotfileDocumentationRequest = $this->httpClient->request('GET', $urlDocumentation);
+        $dotfileDocumentationStatusCode = $dotfileDocumentationRequest->getStatusCode();
+        $dotfileDocumentationContent = $dotfileDocumentationRequest->getContent();
+        //
+        if ($dotfileDocumentationStatusCode != 200) {
+            $dotfileDocumentationContent = "No documentation found";
+        }
+        return array(
+            'error' => $dotfileStatusCode != 200,
+            'documentation' => $dotfileDocumentationContent,
+            'content' => $dotfileContent,
+        );
+
+    }
+
+    public function getRepoResponse(string $technology, DotfileRequestType $requestType, $dotfile = ''): Response
     {
         $formatter = new ResponseFormatter();
-        $formatter->addContentBlock($this->getHelpFileContent());
-        $formatter->addContentBlock($this->getFileListing());
+        switch ($requestType) {
+            case DotfileRequestType::ROOT:
+                $formatter->addHeaderContentBlock($this->getHelpFileContent('/help.txt'));
+                $formatter->addContentBlock($this->getRootFileListing());
+                break;
+            case DotfileRequestType::FOLDER:
+                $formatter->addDotfileListInTechnology($this->getTechnologyFileListing($technology));
+                break;
+            case DotfileRequestType::FILE:
+                $formatter->addDotfileWithDocumentationContentBlock($this->getTechnologyDotFile($technology, $dotfile));
+                break;
+
+        }
 
         $response = new Response($formatter->getFormattedText(), 200);
         $response->headers->set("Content-Type", "text/plain");
         return $response;
     }
+
 }

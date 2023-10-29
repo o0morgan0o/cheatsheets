@@ -22,8 +22,8 @@ services:
 
   App\Services\EnvironmentService:
     arguments:
-      $repoBaseUrl: "%env(APP_DOTFILES_REPO_ROOT_URL)%"
-      $repoContentUrl: "%env(APP_DOTFILES_REPO_CONTENT_URL)%"
+      $rawContentBaseUrl: "%env(APP_DOTFILES_REPO_RAW_CONTENT_BASE_URL)%"
+      $apiBaseUrl: "%env(APP_DOTFILES_REPO_API_BASE_URL)%"
       $repoBranch: "%env(APP_DOTFILES_REPO_BRANCH)%"
 
   # add more service definitions when explicit configuration is needed

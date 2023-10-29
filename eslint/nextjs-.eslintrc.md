@@ -1,0 +1,1 @@
+(.eslintrc) Nextjs configuration

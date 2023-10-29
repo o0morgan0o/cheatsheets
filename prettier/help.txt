@@ -1,0 +1,1 @@
+prettier suports `.prettierrc`, `.prettierrc.json`, `.prettierrc.yml`, `.prettierrc.yaml`, `.prettierrc.js`, `prettier.config.js`. 

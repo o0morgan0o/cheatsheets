@@ -1,12 +1,9 @@
-FROM php:8.2
+FROM php:8.2-alpine
 
-RUN apt update -y \
-    && apt install -y \
-    && apt autoremove -y \
+RUN apk update --no-cache  \
+    && apk add --no-cache \
+    bash curl git zip \
     && docker-php-ext-install mysqli pdo pdo_mysql \
-    && apt install curl -y \
-    && apt install git -y \
-    && apt install zip -y \
     && curl -sS https://get.symfony.com/cli/installer | bash \
     && mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
 

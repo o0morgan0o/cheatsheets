@@ -1,0 +1,75 @@
+# FROM php:8.2-alpine
+
+# RUN apk update --no-cache  \
+#     && apk add --no-cache \
+#     bash curl git zip \
+#     && docker-php-ext-install mysqli pdo pdo_mysql \
+#     && curl -sS https://get.symfony.com/cli/installer | bash \
+#     && mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
+
+# COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+# COPY . /var/www/html
+
+# WORKDIR /var/www/html/
+
+# RUN composer install
+
+# EXPOSE 8000
+
+# ENTRYPOINT ["symfony", "server:start", "--no-tls", "--port=8000"]
+
+
+# COMPOSER INSTALLATION
+FROM docker.io/composer as composer
+WORKDIR /app
+COPY . .
+RUN composer install  --no-interaction  --no-progress
+
+# FROM php:8.2-fpm
+FROM docker.io/php:8.2-fpm-alpine
+
+# RUN apt update && apt install -y \
+RUN apk add \
+    nginx \
+    libpq-dev \
+    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+    && docker-php-ext-install pdo pdo_pgsql pgsql
+
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+COPY --from=composer /app /app
+
+WORKDIR /app
+
+# the php-fpm of the image listen on port 9000, we want to use socket insstead
+RUN sed -i '/listen = 9000/d' /usr/local/etc/php-fpm.d/zz-docker.conf
+RUN echo 'listen = /var/run/php8.2-fpm.sock' >> /usr/local/etc/php-fpm.d/zz-docker.conf
+RUN echo 'listen.mode = 0666' >> /usr/local/etc/php-fpm.d/zz-docker.conf
+
+RUN echo $'\
+    server { \n\
+    listen 80 default_server; \n\
+    root /app/public; \n\
+    index index.php index.html index.htm; \n\
+    server_name _; \n\
+    location / { \n\
+    try_files $uri /index.php$is_args$args; \n\
+    } \n\
+    location ~ ^/index\\.php(/|$) { \n\
+    fastcgi_pass unix:/var/run/php8.2-fpm.sock; \n\
+    fastcgi_split_path_info ^(.*\\.php)(/.*)$; \n\
+    include fastcgi_params; \n\
+    fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name; \n\
+    fastcgi_param DOCUMENT_ROOT $realpath_root; \n\
+    internal; \n\
+    } \n\
+    location ~ \\.php$ { \n\
+    return 404; \n\
+    } \n\
+    }\
+    ' > /etc/nginx/http.d/default.conf
+
+EXPOSE 80
+
+# Don't forget to map an .env.local file to override db connection informations
+CMD php-fpm --daemonize && nginx -g "daemon off;"

@@ -25,6 +25,16 @@ framework:
         headers:
           Authorization: "Bearer %env(APP_GITHUB_API_TOKEN)%"
 
+  cache:
+    app: cache.adapter.filesystem
+    system: cache.adapter.system
+    pools:
+      app_cache:
+        adapter: cache.adapter.filesystem
+        default_lifetime: 600
+
+  error_controller: App\Controller\ErrorController::show
+
 when@test:
   framework:
     test: true

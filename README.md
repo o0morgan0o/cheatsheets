@@ -7,8 +7,6 @@ Copier une image sur un hôte distant:
 
 ## TODO
 
-- [x] add caching mechanism
-- [x] add possibility to call endpoints with int indexes
 - [x] add help text by technology
 - [x] add color to output
 - [x] faire en sorte que les recherches ne soient pas case sensitive

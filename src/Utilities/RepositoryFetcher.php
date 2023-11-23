@@ -1,10 +1,10 @@
 <?php
+
 namespace App\Utilities;
 
-use App\Utilities\ResponseFormatter;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use App\Utilities\UrlBuilder;
 
 
 class RepositoryFetcher
@@ -19,10 +19,11 @@ class RepositoryFetcher
      */
     public function __construct(
         private HttpClientInterface $httpClient,
-        private string $apiBaseUrl,
-        private string $rawContentBaseUrl,
-        private string $branch,
-    ) {
+        private string              $apiBaseUrl,
+        private string              $rawContentBaseUrl,
+        private string              $branch,
+    )
+    {
         $this->urlBuilder = new UrlBuilder($this->apiBaseUrl, $this->rawContentBaseUrl, $this->branch);
     }
 
@@ -51,7 +52,7 @@ class RepositoryFetcher
         $responseList = $folderContentResponse->toArray();
         $technologyListing = array();
         foreach ($responseList as $fileOrFolder) {
-            if ($fileOrFolder['type'] == 'dir') {
+            if ($fileOrFolder['type'] === 'dir') {
                 $technologyListing[] = $fileOrFolder['name'];
             }
         }
@@ -69,10 +70,10 @@ class RepositoryFetcher
         $fileListing = array();
         foreach ($responseList as $fileOrFolder) {
 
-            // here we must fetch all the children and their documentantions
+            // here we must fetch all the children and their documentations
             // but we want to except the help.txt file
-            // we also want to skip the documentation at this step, because the documentation whill be handle after the dotfile
-            if (($fileOrFolder['name'] == 'help.txt') or (FilePathUtilities::endsWith($fileOrFolder['name'], '.md'))) {
+            // we also want to skip the documentation at this step, because the documentation will be handled after the dotfile
+            if (($fileOrFolder['name'] === 'help.txt') or (FilePathUtilities::endsWith($fileOrFolder['name'], '.md'))) {
                 continue;
             }
 
@@ -99,23 +100,46 @@ class RepositoryFetcher
     {
         // get dotfile content
         $url = $this->urlBuilder->buildUrlForDotfileContent($technology, $dotfile);
-        $dotfileRequest = $this->httpClient->request('GET', $url);
-        $dotfileStatusCode = $dotfileRequest->getStatusCode();
-        $dotfileContent = $dotfileRequest->getContent();
-        // get dotfile documentation content
-        $urlDocumentation = $this->urlBuilder->buildUrlForDotfileDocumentationContent($technology, $dotfile);
-        $dotfileDocumentationRequest = $this->httpClient->request('GET', $urlDocumentation);
-        $dotfileDocumentationStatusCode = $dotfileDocumentationRequest->getStatusCode();
-        $dotfileDocumentationContent = $dotfileDocumentationRequest->getContent();
-        //
-        if ($dotfileDocumentationStatusCode != 200) {
-            $dotfileDocumentationContent = "No documentation found";
+        try {
+            $dotfileRequest = $this->httpClient->request('GET', $url);
+            $dotfileStatusCode = $dotfileRequest->getStatusCode();
+            $dotfileContent = $dotfileRequest->getContent();
+            // get dotfile documentation content
+            $urlDocumentation = $this->urlBuilder->buildUrlForDotfileDocumentationContent($technology, $dotfile);
+            $dotfileDocumentationRequest = $this->httpClient->request('GET', $urlDocumentation);
+            $dotfileDocumentationStatusCode = $dotfileDocumentationRequest->getStatusCode();
+            $dotfileDocumentationContent = $dotfileDocumentationRequest->getContent();
+            //
+            if ($dotfileDocumentationStatusCode !== 200) {
+                throw new \RuntimeException("No documentation found");
+            }
+        } catch (TransportExceptionInterface $e) {
+            return array(
+                'error' => true,
+                'documentation' => "No documentation found",
+                'content' => "No content found",
+            );
         }
         return array(
-            'error' => $dotfileStatusCode != 200,
+            'error' => $dotfileStatusCode !== 200,
             'documentation' => $dotfileDocumentationContent,
             'content' => $dotfileContent,
         );
+    }
+
+    public function getTechnologiesAsArray(): array
+    {
+        return $this->getRootFileListing();
+    }
+
+    public function getTechnologyFileListingAsArray(string $technology): array
+    {
+        $rawListing = $this->getTechnologyFileListing($technology)['dotfiles'];
+        $fileListing = array();
+        foreach ($rawListing as $file) {
+            $fileListing[] = $file['dotfile'];
+        }
+        return $fileListing;
 
     }
 

@@ -7,7 +7,8 @@ Copier une image sur un hôte distant:
 
 ## TODO
 
-- [x] add help text by technology
-- [x] add color to output
-- [x] faire en sorte que les recherches ne soient pas case sensitive
-- [x] create deployment scripts with .env files
+- [ ] add help text by technology
+- [ ] add color to output
+- [ ] faire en sorte que les recherches ne soient pas case sensitive
+- [ ] create deployment scripts with .env files
+- [ ] fix bug in prod environnement for getting file

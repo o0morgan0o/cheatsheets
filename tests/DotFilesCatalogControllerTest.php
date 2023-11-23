@@ -1,5 +1,7 @@
 <?php
 declare(strict_types=1);
+
+use App\Tests\TestVariables;
 use PHPUnit\Framework\TestCase;
 
 class DotFilesCatalogControllerTest extends TestCase
@@ -18,7 +20,7 @@ class DotFilesCatalogControllerTest extends TestCase
     }
     public function testRootCall(): void
     {
-        $response = $this->client->request('GET', 'http://localhost:8000/');
+        $response = $this->client->request('GET', 'http://localhost:'. TestVariables::$port . '/');
         $this->assertEquals(200, $response->getStatusCode());
         $content = $response->getBody()->getContents();
         $this->assertStringContainsString('tsconfig', $content);
@@ -26,7 +28,7 @@ class DotFilesCatalogControllerTest extends TestCase
 
     public function testTsConfigRootDirectory(): void
     {
-        $response = $this->client->request('GET', 'http://localhost:8000/tsconfig');
+        $response = $this->client->request('GET', 'http://localhost:'. TestVariables::$port .'/tsconfig');
         $this->assertEquals(200, $response->getStatusCode());
         $content = $response->getBody()->getContents();
         $this->assertStringContainsString('tsconfig.json', $content);

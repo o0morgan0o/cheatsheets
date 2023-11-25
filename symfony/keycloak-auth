@@ -1,0 +1,122 @@
+composer require knpuniversity/oauth2-client-bundle
+composer require stevenmaguire/oauth2-keycloak
+
+knpu_oauth2_client:
+    clients:
+        # configure your clients as described here: https://github.com/knpuniversity/oauth2-client-bundle#configuration
+        keycloak_main:
+            type: keycloak
+            client_id: <client_id>
+            client_secret: <client_secret>
+            redirect_route: connect_keycloak_check
+            redirect_params: {}
+            auth_server_url: <keycloak_url>
+            realm: 'master'
+
+
+
+class KeycloakController extends AbstractController
+{
+#[Route('/connect/keycloak', name: 'connect_keycloak_start')]
+public function connectAction(ClientRegistry $clientRegistry)
+{
+return $clientRegistry
+->getClient('keycloak_main')
+->redirect([
+'openid' // the scopes you want to access
+])
+;
+}
+
+#[Route('/connect/keycloak/check', name: 'connect_keycloak_check')]
+public function connectCheckAction(Request $request, ClientRegistry $clientRegistry)
+{
+}
+}
+?>
+
+/** Keycloak Authentication */
+namespace App\Security;
+
+class KeycloakAuthenticator extends OAuth2Authenticator implements AuthenticationEntryPointInterface
+{
+
+private ClientRegistry $clientRegistry;
+private EntityManagerInterface $em;
+private RouterInterface $router;
+
+public function __construct(ClientRegistry $clientRegistry, EntityManagerInterface $em, RouterInterface $router)
+{
+$this->clientRegistry = $clientRegistry;
+$this->em = $em;
+$this->router = $router;
+}
+
+public function start(Request $request, AuthenticationException $authException = null)
+{
+return new RedirectResponse(
+$this->router->generate('connect_keycloak_start'),
+Response::HTTP_TEMPORARY_REDIRECT
+);
+}
+
+public function supports(Request $request): ?bool
+{
+return $request->attributes->get('_route') === 'connect_keycloak_check';
+}
+
+public function authenticate(Request $request): Passport
+{
+$client = $this->clientRegistry->getClient('keycloak_main');
+$accessToken = $this->fetchAccessToken($client);
+return new SelfValidatingPassport(
+new UserBadge($accessToken->getToken(), function () use ($accessToken, $client) {
+$keycloakUser = $client->fetchUserFromToken($accessToken);
+
+$existingUser = $this
+->em
+->getRepository(User::class)
+->findOneBy(['keycloakId' => $keycloakUser->getId()]);
+if ($existingUser) {
+return $existingUser;
+}
+
+// if user exist but never connected with keycloak
+$email = $keycloakUser->getEmail();
+/** @var User $userIndDatabase */
+$userIndDatabase = $this
+->em
+->getRepository(User::class)
+->findOneBy(['email' => $email]);
+if ($userIndDatabase) {
+$userIndDatabase->setKeycloakId($keycloakUser->getId());
+$this->em->persist($userIndDatabase);
+$this->em->flush();
+return $userIndDatabase;
+}
+
+// user does not exist
+$user = new User();
+$user->setEmail($keycloakUser->getEmail());
+$user->setKeycloakId($keycloakUser->getId());
+$user->setPassword('');
+$user->setRoles(['ROLE_USER']);
+$this->em->persist($user);
+$this->em->flush();
+return $user;
+})
+);
+}
+
+public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
+{
+$targetUrl = $this->router->generate('app_admin_dashboard');
+return new RedirectResponse($targetUrl);
+}
+
+public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
+{
+dd("ERROR");
+}
+}
+?>

@@ -1,0 +1,15 @@
+containers:
+  - name: <name>
+    image: <image>
+    ports:
+      - name: httpport
+        containerPort: 8080
+    volumeMounts:
+      - name: <volume_name>
+        mountPath: <volume_path>
+
+volumes:
+  - name: <volume_name>
+    nfs:
+      server: <nfs_server>
+      path: <nfs_path>

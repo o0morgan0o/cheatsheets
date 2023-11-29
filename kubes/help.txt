@@ -1,0 +1,9 @@
+# create deploy / svc / ingress
+kubectl create deployment my-nginx --image=nginx --port=80 --replicas=3 --namespace=app
+kubectl expose deployment my-nginx --type=NodePort --port=80 --target-port=8000 --namespace=app
+kubectl create ingress --class=nginx --rule="foo.com/=my-service:80" --namespace=app
+kubectl create ingress my-ingress --rule="my-nginx.app.svc.cluster.local/*=my-nginx:80" --namespace=app 
+
+kubectl get services --sort-by=.metadata.name
+kubectl get pods --field-selector=status.phase=Running
+kubectl get pods --show-labels

@@ -82,7 +82,12 @@ class RepositoryFetcher
             // we request the content of the documentation 
             $documentationUrl = $this->urlBuilder->buildUrlForDotfileDocumentationContent($technology, $fileName);
             $documentationUrlRequest = $this->httpClient->request('GET', $documentationUrl);
-            $documentationContent = $documentationUrlRequest->getContent();
+            $documentationStatusCode = $documentationUrlRequest->getStatusCode();
+            if($documentationStatusCode !== 200) {
+                $documentationContent = "No documentation found";
+            }else {
+                $documentationContent = $documentationUrlRequest->getContent();
+            }
 
             $fileListing[] = array(
                 "dotfile" => $fileName,
@@ -108,11 +113,11 @@ class RepositoryFetcher
             $urlDocumentation = $this->urlBuilder->buildUrlForDotfileDocumentationContent($technology, $dotfile);
             $dotfileDocumentationRequest = $this->httpClient->request('GET', $urlDocumentation);
             $dotfileDocumentationStatusCode = $dotfileDocumentationRequest->getStatusCode();
-            $dotfileDocumentationContent = $dotfileDocumentationRequest->getContent();
             //
             if ($dotfileDocumentationStatusCode !== 200) {
                 throw new \RuntimeException("No documentation found");
             }
+            $dotfileDocumentationContent = $dotfileDocumentationRequest->getContent();
         } catch (TransportExceptionInterface $e) {
             return array(
                 'error' => true,

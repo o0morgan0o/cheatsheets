@@ -65,7 +65,7 @@ class UrlBuilderTest extends TestCase
         );
     }
 
-    public function tetGetDotfileDocumentationContentUrl(): void
+    public function testGetDotfileDocumentationContentUrl(): void
     {
         $url = $this->urlBuilder->buildUrlForDotfileDocumentationContent("tsconfig", "tsconfig.json");
         $this->assertEquals(

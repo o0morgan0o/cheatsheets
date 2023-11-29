@@ -1,0 +1,3 @@
+# TEST
+bin/phpunit --testdox
+bin/phpunit --filter "my filter"

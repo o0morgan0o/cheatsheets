@@ -7,3 +7,8 @@ kubectl create ingress my-ingress --rule="my-nginx.app.svc.cluster.local/*=my-ng
 kubectl get services --sort-by=.metadata.name
 kubectl get pods --field-selector=status.phase=Running
 kubectl get pods --show-labels
+
+# copy secret to another namespace
+kubectl get secret my-tlssecret --namespace=nginx-ns -o yaml | sed 's/namespace: .*/namespace: default/' | kubectl apply -f -
+# docker login secret
+kubectl create secret docker-registry <secret-name> --docker-username='<robot-account>' --docker-password=<password> --docker-server=<registry-host>  --namespace=<namespace>

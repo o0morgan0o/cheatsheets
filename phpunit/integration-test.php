@@ -1,3 +1,15 @@
+/**
+* Remove deprecations messages
+* in phpunit.xml.dist
+* <php>
+    * ...
+    *
+    <env name="SYMFONY_DEPRECATIONS_HELPER"
+         value="logFile=var/log/deprecations.log" />
+    *
+</php>
+*/
+
 <?php
 namespace App\Tests\Integration\Repository;
 
@@ -38,6 +50,16 @@ class LockDownRepositoryTest extends KernelTestCase
         $entityManager->persist($lockDown);
         $entityManager->flush();
         $this->assertTrue($this->getLockDownRepository()->isInLockDown());
+
+
+        // check a specify query
+        $lockdown = $this->createQueryBuilder('lock_down')
+            ->orderBy('lock_down.createdAt', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        $this->assert($lockdown instanceof LockDown);
     }
     private function getLockDownRepository(): LockDownRepository
     {

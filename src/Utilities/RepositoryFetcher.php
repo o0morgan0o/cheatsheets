@@ -2,7 +2,9 @@
 
 namespace App\Utilities;
 
+use App\Services\EnvironmentService;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -10,22 +12,44 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class RepositoryFetcher
 {
     var $urlBuilder;
+    private string $apiBaseUrl;
+    private string $rawContentBaseUrl;
+    private  string $branch;
 
     /**
-     * @param HTTPClientInterface $httpClient
-     * @param string $repoUrl
-     * @param string $repoContentUrl
-     * @param string $branch
+     * @param EnvironmentService $service
+     * @param HttpClientInterface $httpClient
      */
     public function __construct(
+        private EnvironmentService $service,
         private HttpClientInterface $httpClient,
-        private string              $apiBaseUrl,
-        private string              $rawContentBaseUrl,
-        private string              $branch,
     )
     {
+        $this->apiBaseUrl = $service->getApiBaseUrl();
+        $this->rawContentBaseUrl = $service->getRawContentBaseUrl();
+        $this->branch = $service->getRepoBranch();
+
         $this->urlBuilder = new UrlBuilder($this->apiBaseUrl, $this->rawContentBaseUrl, $this->branch);
     }
+
+    public function getCheatSheet(string $cheatSheet): string | null
+    {
+        $urlToRequest = $this->urlBuilder->buildUrlForCheatSheet($cheatSheet);
+        $response = $this->httpClient->request('GET', $urlToRequest);
+        $statusCode = $response->getStatusCode();
+        if ($statusCode !== 200) {
+            // TODO log error
+            return null;
+        }
+
+        try {
+            return $response->getContent();
+        } catch (ClientExceptionInterface $e) {
+            // TODO log error
+         return null;
+        }
+    }
+
 
     private function getHelpFileContent($helpFilePath): string
     {
@@ -44,7 +68,7 @@ class RepositoryFetcher
         return $helpFileContent;
     }
 
-    private function getRootFileListing()
+    private function getRootFileListing() : array
     {
         $url = $this->urlBuilder->buildUrlForRootTechnologyListing();
         $folderContentResponse = $this->httpClient->request('GET', $url);
@@ -52,7 +76,8 @@ class RepositoryFetcher
         $responseList = $folderContentResponse->toArray();
         $technologyListing = array();
         foreach ($responseList as $fileOrFolder) {
-            if ($fileOrFolder['type'] === 'dir') {
+            // check that we have a file finishing with .md
+            if ($fileOrFolder['type'] === 'file' && FilePathUtilities::endsWith($fileOrFolder['name'], '.md')) {
                 $technologyListing[] = $fileOrFolder['name'];
             }
         }
@@ -132,21 +157,6 @@ class RepositoryFetcher
         );
     }
 
-    public function getTechnologiesAsArray(): array
-    {
-        return $this->getRootFileListing();
-    }
-
-    public function getTechnologyFileListingAsArray(string $technology): array
-    {
-        $rawListing = $this->getTechnologyFileListing($technology)['dotfiles'];
-        $fileListing = array();
-        foreach ($rawListing as $file) {
-            $fileListing[] = $file['dotfile'];
-        }
-        return $fileListing;
-
-    }
 
     public function getRepoResponse(string $technology, DotfileRequestType $requestType, $dotfile = ''): Response
     {
@@ -169,4 +179,35 @@ class RepositoryFetcher
         return $response;
     }
 
+    public function getRootRepoResponse(?string $additionalText = ""): Response
+    {
+        $rootFileListing = $this->getRootFileListing();
+
+        $formatter = new ResponseFormatter();
+        if($additionalText !== null){
+            $formatter->addSimpleLine($additionalText);
+        }
+        $formatter->addCheatsheetSummary($rootFileListing, $this->apiBaseUrl);
+
+        $response =  new Response($formatter->getFormattedText(), 200);
+        $response->headers->set("Content-Type", "text/plain");
+        return  $response;
+    }
+
+    public function getCheatSheetResponse(?string $cheatSheetContent, int $visibleIndex): Response
+    {
+        $cheatSheetObject = new CheatSheet($cheatSheetContent);
+
+        $visibleIndexes = array($visibleIndex);
+
+        $responseFormatter = new ResponseFormatter();
+        $responseFormatter->printCheatSheet($cheatSheetObject, $visibleIndexes);
+
+        $response = new Response($responseFormatter->getFormattedText(), 200);
+        $response->headers->set("Content-Type", "text/plain");
+        return $response;
+    }
+
 }
+
+

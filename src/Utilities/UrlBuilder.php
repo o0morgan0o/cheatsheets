@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Utilities;
 
 class UrlBuilder
@@ -8,7 +9,8 @@ class UrlBuilder
         private string $apiBaseUrl,
         private string $rawContentBaseUrl,
         private string $branch
-    ) {
+    )
+    {
     }
 
     public function buildUrlForRootTechnologyListing(): string
@@ -48,11 +50,18 @@ class UrlBuilder
 
     private function sanitizeInput(string $input): string
     {
-        $input = str_replace("/", "", $input);
-        $input = str_replace(" ", "", $input);
-        return $input;
+        return str_replace("/", "", $input);
     }
 
+    public function buildUrlForCheatSheet(string $cheatSheet): string
+    {
+        $sanitizedCheatsheet = $this->sanitizeInput($cheatSheet);
+        // if sanitizedCheatSheet don't finish my .md, we add it
+        if (!FilePathUtilities::endsWith($sanitizedCheatsheet, '.md')) {
+            $sanitizedCheatsheet = $sanitizedCheatsheet . '.md';
+        }
+        return $this->rawContentBaseUrl . '/' . $this->branch . '/' . $sanitizedCheatsheet;
+    }
 
 
 }

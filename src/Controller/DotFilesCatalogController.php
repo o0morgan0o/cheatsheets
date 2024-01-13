@@ -3,18 +3,14 @@
 namespace App\Controller;
 
 use App\Services\EnvironmentService;
-use App\Utilities\DotfileRequestType;
 use App\Utilities\RepositoryFetcher;
-use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Contracts\Cache\TagAwareCacheInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class DotFilesCatalogController extends AbstractController
 {
@@ -36,80 +32,77 @@ class DotFilesCatalogController extends AbstractController
 
     #[Route('/', name: 'dotfiles_catalog')]
     public function index(
+        EnvironmentService  $environmentService,
         HttpClientInterface $httpClient,
     ): Response
     {
-        return $this->cache->get('root', function (ItemInterface $item) use ($httpClient) {
-            $this->logger->info("FETCHING ROOT CATALOG (NO CACHE)");
-            $repositoryFetcher = new RepositoryFetcher($httpClient, $this->repoUrl, $this->repoContentUrl, $this->branch);
-            return $repositoryFetcher->getRepoResponse("/", DotfileRequestType::ROOT);
-        });
+
+        $repositoryFetcher = new RepositoryFetcher($environmentService, $httpClient);
+        return $repositoryFetcher->getRootRepoResponse();
     }
 
-
-    #[Route('/{folder_id}', name: 'dotfiles_catalog_folder_numbered', requirements: ['folder_id' => '\d+'])]
-    public function getFolderNumbered(
+    #[Route('/{cheatSheet}', name: 'cheatsheet')]
+    public function cheatSheet(
+        Request             $request,
+        LoggerInterface     $logger,
         HttpClientInterface $httpClient,
-        int                 $folder_id
+        string              $cheatSheet
     ): Response
     {
-        return $this->cache->get($folder_id, function (ItemInterface $item) use ($httpClient, $folder_id) {
-            $repositoryFetcher = new RepositoryFetcher($httpClient, $this->repoUrl, $this->repoContentUrl, $this->branch);
-            $technologiesNumbered = $repositoryFetcher->getTechnologiesAsArray();
-            if (($folder_id >= 0) && ($folder_id <= count($technologiesNumbered))) {
-                $technologySelected = $technologiesNumbered[$folder_id];
-                return new RedirectResponse("/" . $technologySelected);
-            }
-            return new RedirectResponse("/error");
-        });
+        // we are in the case we look for a cheatsheet without index,
+        // we make the request directly to the corresponding route
+//        return $this->redirectToRoute('cheatsheet_with_index', ['cheatSheet' => $cheatSheet, 'index' => 0]);
+        // TODO not working
+//        $scheme = 'http://';
+//        $baseUrl = $request->getHttpHost();
+//        $urlToFetch = $scheme . $baseUrl . $this->generateUrl('cheatsheet_with_index', ['cheatSheet' => $cheatSheet, 'index' => 0]);
+//        try {
+//            $innerResponse = $httpClient->request('GET', $urlToFetch);
+//            $response = new Response($innerResponse->getContent(), $innerResponse->getStatusCode());
+//            $response->headers->set("Content-Type", "text/plain");
+//            return $response;
+//        } catch (\Exception $e) {
+//            return new Response("Error while fetching cheatsheet: " . $e->getMessage(), 500);
+//        }
+        return new Response("Not implemented", 500);
     }
 
-    #[Route('/{folder}', name: 'dotfiles_catalog_folder')]
-    public function getFolder(
+    #[Route('/{cheatSheet}/{index}', name: 'cheatsheet_with_index')]
+    public function cheatSheetWithIndex(
+        EnvironmentService  $environmentService,
+        LoggerInterface     $logger,
         HttpClientInterface $httpClient,
-        string              $folder
+        string              $cheatSheet,
+        string              $index
     ): Response
     {
-        return $this->cache->get($folder, function (ItemInterface $item) use ($httpClient, $folder) {
-            $path = $folder;
-            $repositoryFetcher = new RepositoryFetcher($httpClient, $this->repoUrl, $this->repoContentUrl, $this->branch);
-            return $repositoryFetcher->getRepoResponse($path, DotfileRequestType::FOLDER);
-        });
+        // 3 cases
+        // if we found a corresponding cheatsheet we return the result
+        // if we don't find a corresponding cheatsheet we return a message with suggestions if we found the starting word
+        // if we don't find any we send the root file listing
+
+        $logger->info("[+] Request for cheatsheet: " . $cheatSheet . " with index: " . $index);
+
+        // TODO handle case where index is string and index is number
+        // let's assume index is a number
+        $indexNumber = (int)$index;
+        $indexNumber = $indexNumber - 1; // because we want index to start at 1
+
+        // so we try to fetch the cheatsheet
+        $repositoryFetcher = new RepositoryFetcher($environmentService, $httpClient);
+        $cheatSheetContent = $repositoryFetcher->getCheatSheet($cheatSheet);
+
+        // case 1: we found a corresponding cheatsheet
+        if ($cheatSheetContent !== null) {
+            return $repositoryFetcher->getCheatSheetResponse($cheatSheetContent, $indexNumber);
+        }
+
+        // case 2: we don't find a corresponding cheatsheet we return a message with suggestions if we found the starting word
+        // TODO
+
+        // case 3:
+        return $repositoryFetcher->getRootRepoResponse("No cheatsheet found at this path: " . $cheatSheet);
     }
 
-    #[Route('/{folder}/{file_numbered}',
-        name: 'dotfiles_catalog_file_numbered',
-        requirements: ['file_numbered' => '\d+'],
-        priority: 10)]
-    public function getFileNumbered(
-        HttpClientInterface $httpClient,
-        string              $folder,
-        int                 $file_numbered,
-    ): Response
-    {
-        return $this->cache->get($folder . "/" . $file_numbered, function (ItemInterface $item) use ($httpClient, $folder, $file_numbered) {
-            $repositoryFetcher = new RepositoryFetcher($httpClient, $this->repoUrl, $this->repoContentUrl, $this->branch);
-            $filesNumbered = $repositoryFetcher->getTechnologyFileListingAsArray($folder);
-            if (($file_numbered >= 0) && ($file_numbered < count($filesNumbered))) {
-                $fileSelected = $filesNumbered[$file_numbered];
-                return new RedirectResponse("/" . $folder . "/" . $fileSelected);
-            }
-            return new RedirectResponse("/error");
-        });
-
-    }
-
-    #[Route("/{folder}/{file}", name: 'dotfiles_catalog_file', priority: 1)]
-    public function getFile(
-        HttpClientInterface $httpClient,
-        string              $folder,
-        string              $file
-    ): Response
-    {
-        return $this->cache->get($folder . "/" . $file, function (ItemInterface $item) use ($httpClient, $folder, $file) {
-            $repositoryFetcher = new RepositoryFetcher($httpClient, $this->repoUrl, $this->repoContentUrl, $this->branch);
-            return $repositoryFetcher->getRepoResponse($folder, DotfileRequestType::FILE, $file);
-        });
-    }
 
 }

@@ -1,9 +1,0 @@
-# after systemctl --user edit --force --full my-service.service
-[Unit]
-Description=My Unit
-
-[Service]
-ExecStart=/bin/my-binary
-
-[Install]
-WantedBy=default.target

@@ -23,15 +23,24 @@ if < alpine 3.6, add repository
 `bind_ip = 0.0.0.0`
 `port = 27017`
 `logpath = /var/log/mongodb/mongod.log`
-
+ensuite
 `mkdir -p /data/db /var/log/mongodb`
-
 `mongod --config /etc/mongodb.conf`
 
 # (slug: commands) Commands
 
 `use dbs`
+`db.getName() # see current db`
+`show tables`
+`db.employee.find()`
 
 # (slug: user-creation)
 
 `db.user.insert({name: "John", age: 205 })`
+
+
+# (slug: backup-and-restore) Backup and restore
+
+`mongodump --uri="mongodb://<user>:p<password>@<ip>:27017" --out=/data/backup/`
+`mongodump --uri="mongodb://<user>:p<password>@<ip>:27017" --out=/data/backup/ --db=test`
+`mongorestore --uri=mongodb://<user>:p<password>@<ip>:27017 /data/backup/`

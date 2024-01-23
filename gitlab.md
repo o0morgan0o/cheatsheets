@@ -37,7 +37,6 @@ Run locally .gitlab-ci.yml
 `    - docker:24.0.5-dind`
 `  variables:`
 `    IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG`
-
 `  before_script:`
 `    - echo "Logging to GitLab Container Registry with CI credentials..."`
 `    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY`

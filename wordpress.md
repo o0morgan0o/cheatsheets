@@ -1,8 +1,8 @@
 # (slug: installation-with-bedrock)
 composer create-project roots/bedrock
-
-# (slug: composer-install-plugin)
 composer require wpackagist-plugin/askimet
+composer require roots/wordpress -W # upgrade wordpress to latest version
+composer require wpackagist-theme/twentytwentythree # add theme
 
 # (slug: wpcli)
 wp core install --url=http://site.com --title=my-site --admin_user=<user> --admin_password=<password> --admin_email=<email>

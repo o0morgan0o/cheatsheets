@@ -3,6 +3,7 @@ docker run -e POSTGRES_DB=app -e POSTGRES_PASSWORD=app -e POSTGRES_USER=app -p 5
 
 # (slug: simple-connection)
 psql -h localhost -p 5432 -U morgan my-database 
+postgres://user:secret@localhost:5432/mydatabasename
 psql --list
 
 # (slug: commandes)

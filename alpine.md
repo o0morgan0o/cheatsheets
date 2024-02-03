@@ -5,8 +5,8 @@
 
 # (slug: services)
 
-`rc-service --list`
-`rc-update add apache2 default`
-`rc-update del apache2`
-`rc-service apache2 start`
-`rc-service apache2 restart`
+rc-service --list
+rc-update add apache2 default
+rc-update del apache2
+rc-service apache2 start
+rc-service apache2 restart

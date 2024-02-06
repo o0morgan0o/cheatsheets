@@ -27,3 +27,8 @@ spec:
   imagePullSecrets:
     - name: myregistry.com-registry-key
 ```
+
+# (slug: view-secrets) Voir les secrets
+```
+kubectl view-secret <secret> -n <namespace> -a
+```

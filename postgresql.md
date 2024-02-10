@@ -12,6 +12,10 @@ vi /etc/postgresql/15/main/postgresql.conf # => change listen_addresses
 vi /etc/postgresql/15/main/pg_hba.conf # => change IPv4 connections
 systemctl restart postgresql
 
+# (slug: grant-all-privileges)
+grant pg_read_all_data to <user>;
+grant pg_write_all_data to <user>;
+
 # (slug: docker-postgres)
 docker run -e POSTGRES_DB=app -e POSTGRES_PASSWORD=app -e POSTGRES_USER=app -p 5432:5432 postgres
 

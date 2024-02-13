@@ -16,10 +16,14 @@ bin/console var:export --multiline
 bin/console doctrine:database:create --env=test
 bin/console doctrine:schema:create --env=test
 
+bin/console debug:autowiring
+
+
 bin/phpunit --testdox
 
 symfony new --full my_project
 symfony open:local:webmail // composer require symfony/mailer
+symfony local:php:list  ## voir les versions de php disponibles
 
 composer require symfony/mailer
 composer require zenstruct/mailer-test --dev

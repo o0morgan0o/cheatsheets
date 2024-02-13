@@ -28,3 +28,11 @@ symfony local:php:list  ## voir les versions de php disponibles
 composer require symfony/mailer
 composer require zenstruct/mailer-test --dev
 ```
+
+# (slug: symfony-app-with-react)
+```
+composer require asset-mapper asset twig
+composer require maker-bundle --dev
+composer require dtof/doctrine-extensions-bundle
+bin/console debug:asset-map
+```

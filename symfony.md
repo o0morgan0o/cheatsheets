@@ -1,3 +1,10 @@
+# (slug: new-project)
+```
+symfony new my-app
+cd my-app
+composer require webapp
+```
+
 # (slug: commands) Commands
 
 ```

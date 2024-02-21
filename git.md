@@ -19,3 +19,8 @@ git config --global --user.name "John Doe"
 git config --global --user.email "john.doe@mail.com"
 git config --global --edit
 vim ~/.gitconfig
+
+# (slug: github-pat-token)
+```
+git remote set-url origin https://<user>:<token_pat>@github.com/<username>/<repo>.git
+```

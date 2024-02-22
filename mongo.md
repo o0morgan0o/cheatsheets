@@ -1,6 +1,6 @@
-# (slug: install-alpine)
+# Install Alpine
 
-```
+```bash
 if < alpine 3.6, add repository
 echo 'http://dl-cdn.alpinelinux.org/alpine/v3.6/main' >> /etc/apk/repositories
 echo 'http://dl-cdn.alpinelinux.org/alpine/v3.6/community' >> /etc/apk/repositories
@@ -13,42 +13,49 @@ rc-update add mongodb default
 rc-service mongodb start
 ```
 
-# (slug: user-admin)
+# User Admin
 
+```postgres-psql
 use admin
 db.createUser({user: "admin", pwd: "password", roles: [{ role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase"]})
-
-
-# (slug: creation,initialisation) Creation of a new database
-
 ```
-/etc/mongodb.conf
+
+
+# Creation of a new database
+
+```bash
+vi /etc/mongodb.conf
 bind_ip = 0.0.0.0
 port = 27017
 logpath = /var/log/mongodb/mongod.log
 ```
 ensuite
-```
+
+```bash
 mkdir -p /data/db /var/log/mongodb
 mongod --config /etc/mongodb.conf
 ```
 
-# (slug: commands) Commands
+# Commands
 
-```
+```postgres-psql
 use dbs
 db.getName() # see current db
 show tables
 db.employee.find()
 ```
 
-# (slug: user-creation)
+# User Creation
 
+```bash
 db.user.insert({name: "John", age: 205 })
+```
 
 
-# (slug: backup-and-restore) Backup and restore
+# Backup and restore
 
+```bash
 mongodump --uri="mongodb://<user>:p<password>@<ip>:27017" --out=/data/backup/
 mongodump --uri="mongodb://<user>:p<password>@<ip>:27017" --out=/data/backup/ --db=test
 mongorestore --uri=mongodb://<user>:p<password>@<ip>:27017 /data/backup/
+```

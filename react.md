@@ -1,4 +1,4 @@
-# (slug: native-elements-props)
+# Native Element Props
 
 ```jsx
 interface CardCtaProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {

@@ -1,5 +1,5 @@
-# (slug: basic-shortcuts) Basic Shortcuts
-```
+# Basic Shortcuts
+```toml
 Ctrl+A # move to start of line
 Ctrl+E # move end of line
 Ctrl+K # delete from cursor to end

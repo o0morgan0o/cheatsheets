@@ -1,5 +1,5 @@
-# (slug: install-template)
-```
+# Install Template
+```bash
 symfony new my-app
 cd my-app
 composer install
@@ -16,7 +16,7 @@ npm i @vitejs/plugin-react
 npm run dev
 ```
 
-```
+```js
 // assets/bootstrap.js
 import { startStimulusApp, registerControllers } from "vite-plugin-symfony/stimulus/helpers" 
 import { registerReactControllerComponents } from "vite-plugin-symfony/stimulus/helpers/react" 
@@ -26,7 +26,7 @@ const app = startStimulusApp();
 registerControllers(app, import.meta.glob('./controllers/*_(lazy)\?controller.[jt]s(x)\?'))
 ```
 
-```
+```js
 // vite.config.js
 import { defineConfig } from 'vite'
 
@@ -50,7 +50,7 @@ export default defineConfig({
 });
 ```
 
-```
+```twig
 {# base.html.twig #}
 {{ vite_entry_link_tags('app') }}
 {{ vite_entry_script_tags('app', {
@@ -58,12 +58,12 @@ export default defineConfig({
   }) }}
 ```
 
-```
+```twig
 {# your-template.html.twig #}
 <div {{ react_component('Hello', { 'fullName': 'Vite & Stimulus' }) }}></div>
 ```
 
-```
+```jsx
 // assets/react/controllers/Hello.tsx
 import React from 'react';
 
@@ -72,8 +72,8 @@ export default function (props) {
 }
 ```
 
-```
-// tsconfig.json
+tsconfig.json
+```json
 {
   "compilerOptions": {
     "jsx": "react",

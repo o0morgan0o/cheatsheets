@@ -1,5 +1,5 @@
-# (slug: commandes) Commandes
+# Commandes
 
-```
+```bash
 systemctl --user edit --force --full my-service.service
 ```

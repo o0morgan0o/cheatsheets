@@ -1,6 +1,6 @@
-# (slug: nice-features) Nice Features
+# Nice Features
 
-```
+```jsx
 elements.map((el)=>{
   <div className="first:bg-red-900 odd:text-2xl even:text-3xl disabled:bg-gray focus:ring-4">Hello</div>
 })
@@ -16,7 +16,7 @@ elements.map((el)=>{
 ```
 
 # nested named groups, use "group/<name>", like "group/item" or "group/edit"
-```
+```jsx
 <ul role="list">
   {#each people as person}
   <li class="group/item hover:bg-slate-100 ...">
@@ -37,7 +37,7 @@ elements.map((el)=>{
 ```
 
 # group depuis une class
-```
+```jsx
 <div class="group is-published">
   <div class="hidden group-[.is-published]:hover">
     Published
@@ -45,8 +45,8 @@ elements.map((el)=>{
 </div>`
 ```
 
-# sibling stae
-```
+# sibling state
+```jsx
 <form>
   <label class="block">
     <span class="block text-sm font-medium text-slate-700">Email</span>
@@ -59,7 +59,7 @@ elements.map((el)=>{
 ```
 
 # styling based on descendants ("has-[:checked]" or "has-[:focus]" or "group-has-[a]:block")
-```
+```jsx
 <label class="has-[:checked]:bg-indigo-50 has-[:checked]:text-indigo-900 has-[:checked]:ring-indigo-200 ..">
   <svg fill="currentColor">
   </svg>
@@ -69,7 +69,7 @@ elements.map((el)=>{
 ```
 
 # first line and first Letter
-```
+```jsx
 <p class="first-line:uppercase first-line:tracking-widest
   first-letter:text-7xl first-letter:font-bold first-letter:text-white
   first-letter:mr-3 first-letter:float-left
@@ -82,7 +82,7 @@ elements.map((el)=>{
 
 
 # dialog backdrops
-```
+```jsx
 <dialog class="backdrop:bg-gray-50">
   <form method="dialog">
     <!-- ... -->
@@ -98,7 +98,7 @@ elements.map((el)=>{
 ```
 
 # colors for css variables
-```
+```css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -109,7 +109,9 @@ elements.map((el)=>{
     /* ... */
   }
 }
-<!-- end in tailwind config -->
+```
+
+```jsx
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   theme: {

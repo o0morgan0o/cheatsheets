@@ -1,4 +1,4 @@
-# (slug: debug) Debug
+# Debug
 
-afficher les commandes exécutées
+Afficher les commandes exécutées
 `#!/bin/sh -x`

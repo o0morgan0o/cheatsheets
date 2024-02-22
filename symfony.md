@@ -1,13 +1,13 @@
-# (slug: new-project)
-```
+# New Project
+```bash
 symfony new my-app
 cd my-app
 composer require webapp
 ```
 
-# (slug: commands) Commands
+# Commands
 
-```
+```bash
 bin/console doctrine:query:sql "SELECT \* FROM user"
 
 bin/console debug:container --env-vars
@@ -36,8 +36,8 @@ composer require symfony/mailer
 composer require zenstruct/mailer-test --dev
 ```
 
-# (slug: symfony-app-with-react)
-```
+# Symfony App with React
+```bash
 composer require asset-mapper asset twig
 composer require maker-bundle --dev
 composer require dtof/doctrine-extensions-bundle

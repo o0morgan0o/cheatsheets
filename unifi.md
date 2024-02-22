@@ -1,5 +1,5 @@
-# (slug: ssh-commands)
-```
+# SSH Commands
+```bash
 info
 arp -a
 ifconfig

@@ -1,4 +1,5 @@
-# (slug: default-configuration)
+# Default Configuration
+
 ```
 .shell powershell
 

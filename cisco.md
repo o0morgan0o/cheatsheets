@@ -1,5 +1,6 @@
-# (slug: troubleshooting) Troubleshooting
+# Troubleshooting
 
+```bash
 show interfaces
 show interfaces counter
 show interfaces counter errrors
@@ -9,13 +10,15 @@ show spanning-tree detail
 
 show spanning-tree vlan 1
 show spanning-tree events
+```
 
-# (slug: configuration) Configuration
-
-
-# (slug: debug) Debug
+# Configuration
 
 
+# Debug
+
+```bash
 debug spanning-tree
 debug interface Gig0/3
 debug ?
+```

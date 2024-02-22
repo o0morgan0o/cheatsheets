@@ -1,16 +1,19 @@
-# (slug: push) Push
+# Push
 
-`git remote add origin https://<user>:<access-token>@gitlab.example.com/<user>/<repo>.git`
+```bash
+git remote add origin https://<user>:<access-token>@gitlab.example.com/<user>/<repo>.git
+```
 
-# (slug: runner) Run a ci job 
+# Run a ci job 
 
 Run locally .gitlab-ci.yml
+```bash 
 gitlab-runner exec
 gitlab-ci-local
-
-# (slug: job-shell) Basic shell job
-
 ```
+
+# Basic shell job
+```docker-compose
 build-job:
   stage: build
   tags:
@@ -29,9 +32,9 @@ build-job:
 ```
 
 
-# (slug: job-docker) Basic docker job
+# Basic docker job
 
-```
+```docker-compose
 build-job:
   stage: build
   tags:

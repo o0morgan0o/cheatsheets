@@ -1,10 +1,15 @@
-# (slug: installation-with-bedrock)
+# Installation with Bedrock
+
+```bash
 composer create-project roots/bedrock
 composer require wpackagist-plugin/askimet
 composer require roots/wordpress -W # upgrade wordpress to latest version
 composer require wpackagist-theme/twentytwentythree # add theme
+```
 
-# (slug: wpcli)
+# Wpcli
+
+```bash
 wp core install --url=http://site.com --title=my-site --admin_user=<user> --admin_password=<password> --admin_email=<email>
 wp plugin uninstall --deactivate akismet
 wp plugin install --activate all-in-one-wp-migration
@@ -17,3 +22,4 @@ wp rewrite flush
 
 wp core update
 wp plugin update --all
+```

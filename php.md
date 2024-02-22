@@ -1,3 +1,5 @@
-# (slug: Basic server) Basic Server
+# Basic server) Basic Server
 
+```bash
 php -S 127.0.0.1:8000
+```

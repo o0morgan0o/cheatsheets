@@ -1,6 +1,11 @@
-# (slug: api) Api endpoints
+# Api endpoints
 
-`curl https://elastic.<host>`
-`curl https://elastic.<host>/_search`
+```bash
+curl https://elastic.<host>
+curl https://elastic.<host>/_search
+```
+
+```bash
 Obtention des indices
-`curl https://elastic.<host>/_cat/indices?v`
+curl https://elastic.<host>/_cat/indices?v
+```

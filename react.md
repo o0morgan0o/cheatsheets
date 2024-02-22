@@ -1,5 +1,6 @@
 # (slug: native-elements-props)
-```
+
+```jsx
 interface CardCtaProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
 	children: React.ReactNode;
 }

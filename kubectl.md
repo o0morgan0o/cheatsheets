@@ -33,4 +33,5 @@ spec:
 # Voir les secrets
 ```bash
 kubectl view-secret <secret> -n <namespace> -a
+kubectl get secret <secret> -n <namespace> -o json | jq -r '.data[]' | base64 --decode
 ```

@@ -14,6 +14,15 @@ vi /etc/postgresql/15/main/pg_hba.conf # => change IPv4 connections
 systemctl restart postgresql
 ```
 
+# Common data folders
+```bash
+/var/lib/postgresql/MAJOR_RELEASE/main # => Debian / Ubuntu
+/var/lib/pgsql/data # RedHat / CentOS / Fedora
+C:\Program Files\PostgreSQL\MAJOR_RELEASE\data
+SHOW data_directory;
+pg_config
+```
+
 # Grant All Privileges
 ```bash
 grant pg_read_all_data to <user>;
@@ -33,8 +42,21 @@ postgres://user:secret@localhost:5432/mydatabasename
 psql --list
 ```
 
+# Table
+```sql
+CREATE TABLE orders ( orderid integer PRIMARY KEY );
+CREATE TABLE orderlines ( orderid integer, lineid smallint, PRIMARY KEY (orderid, lineid) );
+ALTER TABLE orderlines ADD FOREIGN KEY (orderid) REFERENCES orders (orderid);
+DROP TABLE orders;
+\d+ # voir les relations
+SELECT * FROM pg_constraint WHERE confrelid = 'orders'::regclass; # voir les relations
+```
+
 # Commandes
 ```bash
+\?
+\h
+\password # pour changer le password du user
 \list
 CREATE DATABASE test-database;
 \connect test-database;
@@ -48,6 +70,16 @@ DROP DATABASE test;
 SELECT current_database();
 SELECT current_user;
 SELECT version();
+SELECT current_time;
+SELECT pg_database_size(current_database());
+SHOW data_directory;
+```
+
+# Passwords
+```sql
+SET password_encryption = 'scram-sha-256';
+\password
+ALTER USER myuser PASSWORD 'secret';
 ```
 
 # Permissions
@@ -56,4 +88,12 @@ ALTER DATABASE my_db OWNER TO my_user;
 GRANT ALL ON ALL TABLES IN SCHEMA public to my_user;
 GRANT ALL ON ALL SEQUENCES IN SCHEMA public to my_user;
 GRANT ALL ON ALL FUNCTIONS IN SCHEMA public to my_user;
+```
+
+# Example util commands
+```sql
+SELECT count(*) FROM information_schema.tables WHERE table_schema NOT IN ('information_schema','pg_catalog'); # compte le nombre de tables
+SELECT sum(pg_database_size(datname)) from pg_database; # taille occupée par toutes les db
+SELECT count(*) FROM table;
+SELECT * FROM pg_extension;
 ```

@@ -16,3 +16,9 @@ net user LazyAdmin *
 # reset password for the domain
 net user /domain testusr *
 ```
+
+# Computer Management UI
+```
+compmgmt.msc
+# Ou bien click droit sur "Mon PC" -> Gestion de l'ordinateur
+```

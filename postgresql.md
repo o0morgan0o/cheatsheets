@@ -43,6 +43,13 @@ CREATE DATABASE test-database;
 DROP DATABASE test;
 ```
 
+# Commandes (Suite)
+```sql
+SELECT current_database();
+SELECT current_user;
+SELECT version();
+```
+
 # Permissions
 ```bash
 ALTER DATABASE my_db OWNER TO my_user;

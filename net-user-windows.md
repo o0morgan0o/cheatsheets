@@ -6,6 +6,8 @@ net User /add /domain testusr * /fullname:"Test User" /passwordreq:yes /time:M-F
 net user /delete lazyadmin
 net user /delete /domain testusr
 net user lazyadmin /active:yes
+net user <user> <password> /add
+net localgroup administrators <user> /add
 
 # set password
 net user LazyAdmin passswd123

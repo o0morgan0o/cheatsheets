@@ -11,6 +11,7 @@ composer require webapp
 bin/console doctrine:query:sql "SELECT \* FROM user"
 
 bin/console debug:container --env-vars
+bin/console debug:container --parameters
 bin/console debug:router
 bin/console debug:router <my_route>
 bin/console debug:router <my_route> --show-aliases

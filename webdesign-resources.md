@@ -13,3 +13,12 @@
 > https://underline-generator.netlify.app/
 
 > https://scrollbar.app/
+
+Inspiration Catalog
+> https://www.curated.design/
+
+Mockups
+> https://shots.so/
+
+Free web templates
+> https://htmlrev.com/

@@ -37,6 +37,11 @@ composer require symfony/mailer
 composer require zenstruct/mailer-test --dev
 ```
 
+# Doctrine
+```bash
+DATABASE_URL="postgresql://user:password@host:5432/app" php bin/console doctrine:migrations:migrate
+```
+
 # Symfony App with React
 ```bash
 composer require asset-mapper asset twig

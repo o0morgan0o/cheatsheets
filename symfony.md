@@ -110,6 +110,7 @@ export const app = startStimulusApp(require.context(
 ## Add UX-Turbo
 ```bash
 composer require symfony/ux-turbo
+npm install
 ```
 
 `templates/home/index.html.twig`

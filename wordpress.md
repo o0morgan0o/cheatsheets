@@ -99,6 +99,23 @@ server {
 }
 ```
 
+# Interesting plugins and themes
+
+## Themes
+
+```bash
+composer require wpackagist-theme/blankslate
+ddev ssh
+wp theme activate blankslate
+wp theme delete twentytwentyfour
+```
+
+```bash
+composer require wpackagist-plugin/turn-off-comments
+composer require wpackagist-plugin/disable-gutenberg
+composer require wpackagist-plugin/woocommerce
+```
+
 
 # Wpcli
 

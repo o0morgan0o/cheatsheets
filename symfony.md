@@ -66,6 +66,8 @@ npm install typscript ts-loader -D
 
 npm install
 npm run watch
+
+bin/console make:stimulus-controller ...
 ```
 
 `assets/app.js`:

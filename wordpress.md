@@ -1,13 +1,48 @@
 # Installation with Bedrock
 
+## Installation sans DDEV
+
 ```bash
 composer create-project roots/bedrock
 composer search wpackagist-plugin/akismet
 composer require wpackagist-plugin/akismet
 composer require roots/wordpress -W # upgrade wordpress to latest version
 composer require wpackagist-theme/twentytwentythree # add theme
-
 ```
+## Installation avec DDEV
+
+```bash
+mkdir my-app
+cd my-app
+ddev config --project-type=wordpress --docroot=web --create-docroot
+ddev composer create roots/bedrock
+ddev describe # view credentials
+```
+Add and replace in `.env` file : 
+
+```.env
+DB_NAME='db'
+DB_USER='db'
+DB_PASSWORD='db'
+DB_HOST='db'
+WP_HOME="${DDEV_PRIMARY_URL}"
+```
+Start the server
+```bash
+ddev start
+ddev ssh
+wp core install --url=https://<ddev_site_url> --admin_user=<user> --admin_email=<email> --admin_password=<password>
+```
+
+Install plugins
+```bash
+composer require wpackagist-plugin
+ddev ssh
+wp plugin activate -all
+```
+
+
+
 The configuration equivalent to `wp-config.php` is `config/application.php`.
 To install plugins as `mu-plugins`, update `composer.json` like this :
 
@@ -40,7 +75,30 @@ To add private repository, add it in `repository` and in `require` in `composer.
   ],
 "require": { "YourGitHubUsername/example-plugin": "2.9.1" }
 ...
+}
 ```
+
+## Nginx configuration for bedrock
+
+```toml
+server {
+  listen 80;
+  server_name example.com;
+
+  root /srv/www/example.com/web;
+  index index.php index.htm index.html;
+
+  # Prevent PHP scripts from being executed inside the uploads folder.
+  location ~* /app/uploads/.*.php$ {
+    deny all;
+  }
+
+  location / {
+    try_files $uri $uri/ /index.php?$args;
+  }
+}
+```
+
 
 # Wpcli
 

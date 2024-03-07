@@ -58,6 +58,12 @@ compose require maker-bundle --dev
 composer require symfony/webpack-encore-bundle
 bin/console make:controller HomeController
 composer require symfony/stimulus-bundle
+
+# for typescript
+# uncomment .enableTypeScriptLoader() and change .addEntry('main', './assets/main.ts') in webpack.config.js
+npx tsc --init
+npm install typscript ts-loader -D
+
 npm install
 npm run watch
 ```

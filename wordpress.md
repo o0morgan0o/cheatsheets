@@ -114,6 +114,14 @@ wp theme delete twentytwentyfour
 composer require wpackagist-plugin/turn-off-comments
 composer require wpackagist-plugin/disable-gutenberg
 composer require wpackagist-plugin/woocommerce
+composer require wpackagist-plugin/wordpress-seo
+composer require wpackagist-plugin/wp-fastest-cache
+composer require wpackagist-plugin/advanced-custom-fields
+composer require wpackagist-plugin/wps-hide-login
+composer require wpackagist-plugin/wordfence
+
+ddev ssh
+wp plugin activate --all
 ```
 
 

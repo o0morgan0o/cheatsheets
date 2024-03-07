@@ -100,10 +100,34 @@ export const app = startStimulusApp(require.context(
 
 `templates/home/index.html.twig`
 ```twig
-...
 <div class="example-wrapper">
     <h1>Hello {{ controller_name }}! ✅</h1>
     This friendly message is coming from:
     <div {{  stimulus_controller('hello') }}></div>
 </div>
+```
+
+## Add UX-Turbo
+```bash
+composer require symfony/ux-turbo
+```
+
+`templates/home/index.html.twig`
+```twig
+{% block body %}
+<turbo-frame id="frame-1">
+    <a href="{{ path('home_2')">Go to 2nd page</a>
+    FRAME 1
+</turbo-frame>
+{% endblock %}
+```
+
+`templates/home/index2.html.twig`
+```twig
+{% block body %}
+<turbo-frame id="frame-1">
+    <a href="{{ path('home_1')">Go to 1st page</a>
+    FRAME 2
+</turbo-frame>
+{% endblock %}
 ```

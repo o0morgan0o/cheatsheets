@@ -46,8 +46,14 @@ app
   .setUrl("http://127.0.0.1:3000")
   .setProxyUrl("https://<app.ddev.site>")
 ```
-And access the site on `http://127.0.0.1:3000`
+And access the site on `http://127.0.0.1:3000`.
 
+Change in `.ddev/config.yml`:
+```yaml
+name: <app.ddev.site>
+...
+php_version: "8.2"
+```
 
 Start the server
 ```bash

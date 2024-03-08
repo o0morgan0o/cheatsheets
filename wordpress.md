@@ -38,6 +38,16 @@ npm run build
 npm run dev
 ```
 
+Change in `bud.config.js`:
+
+```js
+app
+  .setUrl("http://127.0.0.1:3000")
+  .setProxyUrl("https://<app.ddev.site>")
+```
+And access the site on `http://127.0.0.1:3000`
+
+
 Start the server
 ```bash
 ddev start

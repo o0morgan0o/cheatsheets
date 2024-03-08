@@ -1,3 +1,25 @@
+# Example Gitlab & Github Repo (Pull from gitlab)
+
+```toml
+# .git/config
+[core]
+  repositoryformatversion = 0
+  filemode = true
+  bare = false
+  logallrefupdates = true
+[remote "origin"]
+  pushurl = git@github.com:<user>/<repo>.git
+  fetch = +refs/heads/*:refs/remotes/origin/*
+  gh-resolved = base
+  pushurl = git@<gitlab_url>:<user>/<repo>.git
+[branch "main"]
+  remote = origin
+  merge = refs/heads/main
+[pull]
+  rebase = false
+```
+
+
 # Origin
 
 ```bash
@@ -30,3 +52,5 @@ vim ~/.gitconfig
 ```bash
 git remote set-url origin https://<user>:<token_pat>@github.com/<username>/<repo>.git
 ```
+
+

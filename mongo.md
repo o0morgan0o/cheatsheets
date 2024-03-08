@@ -1,3 +1,9 @@
+# Docker
+```bash
+docker run -it -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONTO_INITDB_ROOT_PASSWORD=password mongo
+```
+
+
 # Install Alpine
 
 ```bash

@@ -27,6 +27,17 @@ DB_PASSWORD='db'
 DB_HOST='db'
 WP_HOME="${DDEV_PRIMARY_URL}"
 ```
+
+Post-Install
+```bash
+composer require roots/acorn
+cd web/app/themes
+composer create-project roots/sage <theme-name>
+npm install
+npm run build
+npm run dev
+```
+
 Start the server
 ```bash
 ddev start

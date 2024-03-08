@@ -162,6 +162,12 @@ wp rewrite flush
 wp core update
 wp plugin update --all
 
+wp db cli
+wp db optimize
+wp db search
+wp db tables
+wp db repair
+wp db import
 wp db export ~/wpdump.sql # save database
 tar -vczf ~/backupwordpress /path/to/wordpress/site # backup wordpress files
 ```

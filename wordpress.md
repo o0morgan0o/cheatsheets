@@ -59,7 +59,7 @@ Start the server
 ```bash
 ddev start
 ddev ssh
-wp core install --url=https://<ddev_site_url> --admin_user=<user> --admin_email=<email> --admin_password=<password>
+wp core install --url=https://<ddev_site_url> --title=<site_title> --admin_user=<user> --admin_email=<email> --admin_password=<password>
 ```
 
 Install plugins

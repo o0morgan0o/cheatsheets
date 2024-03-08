@@ -33,6 +33,7 @@ Post-Install
 composer require roots/acorn
 cd web/app/themes
 composer create-project roots/sage <theme-name>
+cd <theme-name>
 npm install
 npm run build
 npm run dev

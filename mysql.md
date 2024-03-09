@@ -11,3 +11,15 @@ create database <db>;
 create user '<user>'@'127.0.0.1' identified by '<password>';
 grant all privileges on <db>.* to '<user>'@'127.0.0.1';
 ```
+
+# MariaDB
+
+```bash
+apt install mariadb-server
+mariadb-secure-installation
+mysql -u root -p
+CREATE DATABASE <db>;
+CREATE USER '<user>'@'localhost' IDENTIFIED BY '<password>';
+GRANT ALL PRIVILEGES ON <db>.* TO '<user>'@'127.0.0.1';
+flush privileges; 
+```

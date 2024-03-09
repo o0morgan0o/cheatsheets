@@ -19,7 +19,16 @@ apt install mariadb-server
 mariadb-secure-installation
 mysql -u root -p
 CREATE DATABASE <db>;
-CREATE USER '<user>'@'localhost' IDENTIFIED BY '<password>';
-GRANT ALL PRIVILEGES ON <db>.* TO '<user>'@'127.0.0.1';
-flush privileges; 
+CREATE USER '<user>'@'%' IDENTIFIED BY '<password>';
+GRANT ALL PRIVILEGES ON <db>.* TO '<user>'@'%';
+flush privileges;
+
+DROP user '<user>@'localhost';
+SELECT user FROM mysql.user;
+
+```
+
+To listen on all interfaces, add in `/etc/mysql/my.cnf`:
+```toml
+bind-address = 0.0.0.0
 ```

@@ -22,3 +22,6 @@ Mockups
 
 Free web templates
 > https://htmlrev.com/
+
+CSS trics (twitter thread)
+> https://twitter.com/KevinJPowell/status/1766488365904392399

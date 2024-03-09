@@ -43,6 +43,8 @@ Change in `bud.config.js`:
 
 ```js
 app
+   .setPublicPath("/app/themes/<theme>/public/");
+app
   .setUrl("http://127.0.0.1:3000")
   .setProxyUrl("https://<app.ddev.site>")
 ```

@@ -6,7 +6,7 @@ mysql -h 127.0.0.1 -u root -p
 ```
 # Import sql file
 ```bash
-mysql -u <user> -p <db> < file.sql
+mysql -h <host> -u <user> -p <db> < file.sql
 ```
 
 #  Basic Database

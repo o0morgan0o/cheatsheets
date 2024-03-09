@@ -1,7 +1,12 @@
 # Connection
+
 ```bash
 docker run -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=app -p 3306:3306 mysql:latest
 mysql -h 127.0.0.1 -u root -p
+```
+# Import sql file
+```bash
+mysql -u <user> -p <db> < file.sql
 ```
 
 #  Basic Database

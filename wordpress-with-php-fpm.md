@@ -37,7 +37,7 @@ CMD ["/bin/sh", "-c" ,"php-fpm -D && nginx -g 'daemon off;'"]
 With following files:
 
 `nginx/default.conf`:
-```apacheconf
+```nginx
 upstream php  {
     server unix:/var/run/php8.2-fpm.sock;
 }

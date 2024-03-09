@@ -13,7 +13,8 @@ WORKDIR /wordpress
 COPY ./composer* .
 RUN composer install
 COPY ./web/app/themes ./web/app/themes
-COPY --from=node /theme/soilla-theme/public /theme/soilla-theme/public
+COPY --from=node /theme/soilla-theme/public ./web/app/themes/soilla-theme/public
+RUN cd ./web/app/themes/soilla-theme && composer install
 
 FROM php:8.2-fpm
 COPY --from=composer /wordpress /var/www/html/wordpress

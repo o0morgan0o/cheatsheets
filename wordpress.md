@@ -251,3 +251,47 @@ Et dasn la template
    ?>
 </form>
 ```
+
+# Ajout d'un Cron
+
+`functions.php`:
+```php
+
+add_action('my_cron', 'my_cron');
+
+register_activation_hook(__FILE__, 'activate_my_cron');
+register_deactivation_hook(__FILE__, 'deactivate_my_cron');
+add_action('init', 'activate_my_cron');
+
+function deactivate_my_cron()
+{
+    wp_clear_scheduled_hook('my_cron');
+}
+
+function activate_my_cron()
+{
+
+    if (! wp_next_scheduled('my_cron')) {
+        wp_schedule_event(time(), 'every-5-minutes', 'my_cron');
+    }
+}
+
+add_filter('cron_schedules', function ($schedules) {
+    $schedules['every-5-minutes'] = array(
+        'interval' => 5 * MINUTE_IN_SECONDS,
+        'display'  => __('Every 5 minutes')
+    );
+    return $schedules;
+});
+
+function my_cron()
+{
+   // Cron code here
+}
+```
+
+## Utilities avec wp-cli
+```bash
+wp cron event list
+wp cron event run my_cron
+```

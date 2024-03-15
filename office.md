@@ -13,3 +13,5 @@ cd c:\Program Files\Microsoft Office\Office 16\
 .\vNextDiag.ps1 -list
 ```
 Will return (User|Subscription) of (Device|Perpetual)
+
+See current subscriptions: https://account.microsoft.com/services

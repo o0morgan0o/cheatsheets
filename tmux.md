@@ -16,4 +16,5 @@ tmux ls
 ```bash
 tmuxinator new <session-name>
 tmuxinator list
+tmuxinator start <session>
 ```

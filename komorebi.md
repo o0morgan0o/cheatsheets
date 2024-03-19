@@ -1,6 +1,6 @@
 # Default Configuration
 
-```
+```bash
 .shell powershell
 
 # Reload whkd configuration

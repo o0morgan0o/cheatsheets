@@ -97,3 +97,21 @@ SELECT sum(pg_database_size(datname)) from pg_database; # taille occupée par to
 SELECT count(*) FROM table;
 SELECT * FROM pg_extension;
 ```
+
+# Docker compose
+
+```yaml
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:14-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=app
+      - POSTGRES_DB=app
+```

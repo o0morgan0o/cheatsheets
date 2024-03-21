@@ -18,7 +18,8 @@ net user /domain testusr *
 ```
 
 # Computer Management UI
-```
+
+```bash
 compmgmt.msc
 # Ou bien click droit sur "Mon PC" -> Gestion de l'ordinateur
 ```

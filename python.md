@@ -16,3 +16,12 @@ deactivate
 # deletion venv
 rm -rf <folder>/venv
 ```
+
+# Use specific python version
+
+Use `pyenv` for this.
+
+```bash
+pyenv install --list
+pyenv local 3.10.0
+```

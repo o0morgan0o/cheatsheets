@@ -13,6 +13,19 @@
   --init crm
 ```
 
+For automatic reload with `watchdog`:
+
+```bash
+watchmedo auto-restart \ 
+  -d ./custom-addons \
+  --patterns="*.*" \
+  --recursive \
+  --signal=SIGKILL \
+  --debounce-interval=0.3 \
+  ./odoo-bin \
+  -- -c ./debian/odoo.conf -d test-2 --dev all -u real_estate_ads
+```
+
 Minimal `odoo.conf` file is : 
 
 ```toml

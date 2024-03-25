@@ -1,5 +1,11 @@
 # Odoo cli
 
+Create custom-module 
+
+```bash
+./odoo-bin scaffold odoo_controller ./custom-addons
+```
+
 ```bash
 ./odoo-bin \
   --config ./debian/odoo.conf \

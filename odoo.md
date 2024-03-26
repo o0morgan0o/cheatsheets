@@ -43,3 +43,41 @@ db_user = odoo
 db_password = odoo
 dbfilter = ^mycompany.*$
 ```
+
+# Xmlrpc
+
+Basic connection : 
+
+```python
+import xmlrpc.client
+
+url = 'http://127.0.0.1:8069'
+db = '<db>'
+username = '<user>'
+password = '<password>'
+
+# info = xmlrpc.client.ServerProxy(url).start()
+# 
+# url, db, username, password = info['host'], info['database'], info['user'], info['password']
+
+common = xmlrpc.client.ServerProxy('{}/xmlrpc/2/common'.format(url))
+ver = common.version()
+print(ver)
+uid = common.authenticate(db, username, password, {})
+print(uid)
+
+models = xmlrpc.client.ServerProxy('{}/xmlrpc/2/object'.format(url))
+canRead = models.execute_kw(db, uid, password, 'res.partner', 'check_access_rights', ['read'], {'raise_exception': False})
+print("canRead", canRead)
+
+response = models.execute_kw(db, uid, password, 'res.partner',
+                             'search_read',
+                             [[['is_company', '=', True]]],
+                             {'fields': ['name', 'phone'], 'limit': 5})
+print(response)
+
+# get all fields in model
+response = models.execute_kw(db, uid, password, 'estate.property', 'search_read', [[]],
+                             {'fields': ['name'], 'limit': 0})
+print(response)
+```

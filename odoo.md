@@ -81,3 +81,47 @@ response = models.execute_kw(db, uid, password, 'estate.property', 'search_read'
                              {'fields': ['name'], 'limit': 0})
 print(response)
 ```
+
+# Basic View in Module
+
+```xml
+<!-- suppose a model hospital.patient -->
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+  <data>
+
+    <!-- Custom view for this model -->
+    <record id="om_hospital.patient_form_view" model="ir.ui.view">
+      <field name="name">hospital.patient.form</field>
+      <field name="model">hospital.patient</field>
+      <field name="arch" type="xml">
+        <form string="Patient">
+          <sheet>
+            <group>
+              <field name="name"/>
+              <field name="age"/>
+              <field name="lastName"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- Default view for this model -->
+    <record model="ir.actions.act_window" id="om_hospital.show">
+      <field name="name">Patient</field>
+      <field name="res_model">hospital.patient</field>
+      <field name="view_mode">tree,form</field>
+      <!--      <field name="view_id" ref="om_hospital.patient_form_view"/>-->
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          Create the first patient
+        </p>
+      </field>
+    </record>
+
+    <menuitem id="menu_hospital_root" name="Hospital" sequence="0" action="om_hospital.show"/>
+
+  </data>
+</odoo>
+```

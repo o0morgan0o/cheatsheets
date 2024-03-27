@@ -84,6 +84,8 @@ print(response)
 
 # Basic View in Module
 
+Note: Don't forget to add permissions in `security/ir.model.access.csv` and import the security file in `data` in `manifest.json`.
+
 ```xml
 <!-- suppose a model hospital.patient -->
 <?xml version="1.0" encoding="UTF-8" ?>

@@ -33,9 +33,11 @@ watchmedo auto-restart \
 ```
 
 ```psql
-# reset user password
 psql <app>
+# reset user password
 update res_users set password='test' where login='admin'
+# disable double auth for user
+update res_users set totp_secret='' where login='<user@mail.com>'
 ```
 
 Minimal `odoo.conf` file is : 

@@ -6,6 +6,12 @@ Create custom-module
 ./odoo-bin scaffold odoo_controller ./custom-addons
 ```
 
+First install 
+
+```bash
+./odoo-bin -i all -d app --without-demo=all
+```
+
 ```bash
 ./odoo-bin \
   --config ./debian/odoo.conf \
@@ -38,6 +44,13 @@ psql <app>
 update res_users set password='test' where login='admin'
 # disable double auth for user
 update res_users set totp_secret='' where login='<user@mail.com>'
+```
+
+## Create database with unicode
+
+```bash
+psql postgres
+CREATE DATABASE "odoo" ENCODING 'unicode' LC_COLLATE 'C' TEMPLATE "template0"
 ```
 
 Minimal `odoo.conf` file is : 

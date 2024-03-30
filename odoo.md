@@ -32,6 +32,12 @@ watchmedo auto-restart \
   -- -c ./debian/odoo.conf -d test-2 --dev all -u real_estate_ads
 ```
 
+```psql
+# reset user password
+psql <app>
+update res_users set password='test' where login='admin'
+```
+
 Minimal `odoo.conf` file is : 
 
 ```toml

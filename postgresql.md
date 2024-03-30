@@ -6,8 +6,8 @@ psql
 create user <user> with password '<password>';
 create database <db>;
 alter database <db> owner to <user>;
-grant all on tables in schema public to <user>;
-grant all on sequences in schema public to <user>;
+grant all on all tables in schema public to <user>;
+grant all on all sequences in schema public to <user>;
 grant all on all functions in schema public to <user>;
 vi /etc/postgresql/15/main/postgresql.conf # => change listen_addresses
 vi /etc/postgresql/15/main/pg_hba.conf # => change IPv4 connections

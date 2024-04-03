@@ -25,6 +25,9 @@ go test -fuzz=FuzzReverse
 go test -fuzztime 10s
 # Execute fuzz with random data
 go test -fuzz=Fuzz
+
+# Run only failing test (get the hash in original test)
+go test -run=FuzzReverse/deaae2ca3cf382f4
 ```
 
 ```go

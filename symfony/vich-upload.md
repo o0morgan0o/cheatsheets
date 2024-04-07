@@ -235,3 +235,18 @@ class ProfileController extends AbstractController
     }
 }
 ```
+
+## Show image preview in form
+
+For this override the template theme of the `ImageType`, in the `easycorp/easyadmin-bundle/src/Resources/views/crud/form_theme.html.twig` :
+
+```twig
+...
+{% block ea_fileupload_widget %}
+    ADD THIS ----> <img src="/images/users/thumbnails/{{ (currentFiles|first).filename }}"/>
+    <h1>{{ (currentFiles|first).filename }}</h1>
+    <div class="ea-fileupload">
+...
+...
+
+```

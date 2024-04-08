@@ -25,3 +25,6 @@ Free web templates
 
 CSS trics (twitter thread)
 > https://twitter.com/KevinJPowell/status/1766488365904392399
+
+Color set (very classic)
+> https://ui.jln.dev/

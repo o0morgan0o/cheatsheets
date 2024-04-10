@@ -28,3 +28,6 @@ CSS trics (twitter thread)
 
 Color set (very classic)
 > https://ui.jln.dev/
+
+Correcteur pour l'algnement vertical des fonts 
+> https://transfonter.org/

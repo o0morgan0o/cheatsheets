@@ -31,3 +31,9 @@ Color set (very classic)
 
 Correcteur pour l'algnement vertical des fonts 
 > https://transfonter.org/
+
+
+# React Libraries 
+
+Toasts 
+> https://github.com/fkhadra/react-toastify

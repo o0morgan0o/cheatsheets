@@ -38,3 +38,4 @@ Correcteur pour l'algnement vertical des fonts
 Toasts 
 > https://github.com/fkhadra/react-toastify
 > https://github.com/timolins/react-hot-toast
+> https://github.com/emilkowalski/sonner

@@ -7,3 +7,19 @@ run install-all: ##
 run-docker-database: ##
 	cd api && docker compose up
 ```
+
+# Exemple de configuration
+
+```makefile
+.DEFAULT_GOAL  := build
+
+.PHONY:fmt vet build
+fmt:
+  go fmt ./...
+
+vet: fmt
+  go vet ./...
+
+build: vet
+  go build
+```

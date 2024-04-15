@@ -32,6 +32,9 @@ Color set (very classic)
 Correcteur pour l'algnement vertical des fonts 
 > https://transfonter.org/
 
+Icons
+> https://lucide.dev/icons/?search=edit
+> https://fonts.google.com/icons
 
 # React Libraries 
 
@@ -39,3 +42,4 @@ Toasts
 > https://github.com/fkhadra/react-toastify
 > https://github.com/timolins/react-hot-toast
 > https://github.com/emilkowalski/sonner
+
